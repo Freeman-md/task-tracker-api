@@ -10,7 +10,9 @@ public enum TaskStatus
 public class TodoTask
 {
     public Guid Id { get; set; }
-    public required string Text { get; set; }
+    public required string Title { get; set; }
+    public required string Description { get; set; }
+    public DateTime DueDate { get; set; }
     public required TaskStatus TaskStatus { get; set; }
 
     public Guid UserId { get; set; }
@@ -18,10 +20,13 @@ public class TodoTask
 
     public TodoTask() {}
 
-    public TodoTask(string text, TaskStatus taskStatus)
-    {
-        Id = Guid.NewGuid();
-        Text = text;
-        TaskStatus = taskStatus;
-    }
+    public TodoTask(string title, string description, TaskStatus taskStatus, DateTime? dueDate = null)
+{
+    Id = Guid.NewGuid();
+    Title = title;
+    Description = description;
+    TaskStatus = taskStatus;
+    DueDate = dueDate ?? DateTime.Now.AddDays(1);
+}
+
 }
