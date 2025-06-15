@@ -17,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlite("Data Sou
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
-
+builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {

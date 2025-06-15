@@ -11,12 +11,20 @@ public class AuthService : IAuthService
 {
     private readonly AppDbContext _appDbContext;
     private readonly IPasswordHasher<User> _passwordHasher;
+    private readonly ITokenService _tokenService;
+
     private readonly ILogger<AuthService> _logger;
 
-    public AuthService(AppDbContext appDbContext, IPasswordHasher<User> passwordHasher, ILogger<AuthService> logger)
+    public AuthService(
+        AppDbContext appDbContext,
+        IPasswordHasher<User> passwordHasher,
+        ITokenService tokenService,
+        ILogger<AuthService> logger
+        )
     {
         _appDbContext = appDbContext;
         _passwordHasher = passwordHasher;
+        _tokenService = tokenService;
         _logger = logger;
     }
 
@@ -31,7 +39,7 @@ public class AuthService : IAuthService
         var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
         if (result == PasswordVerificationResult.Failed) throw new Exception("Invalid credentials");
 
-        return "fake-token";
+        return _tokenService.GenerateToken(user);
     }
 
 
