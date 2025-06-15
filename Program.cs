@@ -26,7 +26,9 @@ builder.Services.AddControllers()
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
-builder.Services.AddDbContext<AppDbContext>(option => option.UseSqlite("Data Source=Data/Database.db"));
+builder.Services.AddDbContext<AppDbContext>(option =>
+    option.UseSqlite(builder.Configuration.GetConnectionString("Default")));
+
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -58,16 +60,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             )
         };
         options.Events = new JwtBearerEvents
-    {
-        OnChallenge = context =>
         {
-            context.HandleResponse();
-            context.Response.StatusCode = 401;
-            context.Response.ContentType = "application/json";
-            var payload = JsonSerializer.Serialize(ApiResponse<object>.ErrorResponse("Unauthorized"));
-            return context.Response.WriteAsync(payload);
-        }
-    };
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+                var payload = JsonSerializer.Serialize(ApiResponse<object>.ErrorResponse("Unauthorized"));
+                return context.Response.WriteAsync(payload);
+            }
+        };
     });
 
 
