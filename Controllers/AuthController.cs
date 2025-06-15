@@ -51,4 +51,33 @@ public class AuthController : ControllerBase
             );
         }
     }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(
+                ApiResponse<object>.ErrorResponse(
+                    "Validation failed",
+                    ModelState.ToApiErrors()
+                )
+            );
+        }
+
+        try
+        {
+            var token = await _authService.LoginAsync(dto);
+            return Ok(
+                ApiResponse<object>.SuccessResponse(
+                    new { token },
+                    "Login Successful"
+                )
+            );
+        }
+        catch (System.Exception ex)
+        {
+            return BadRequest(ApiResponse<object>.ErrorResponse(ex.Message));
+        }
+    }
 }

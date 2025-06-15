@@ -20,10 +20,20 @@ public class AuthService : IAuthService
         _logger = logger;
     }
 
-    public Task<User> LoginAsync(RegisterUserDto dto)
+    public async Task<string> LoginAsync(LoginDto dto)
     {
-        throw new NotImplementedException();
+        var user = await _appDbContext.Users.SingleOrDefaultAsync(
+            user => user.Email == dto.Email.ToLower()
+        );
+
+        if (user is null) throw new Exception("Invalid credentials"); // avoids revealing if email exists to prevent brute force attacks
+
+        var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+        if (result == PasswordVerificationResult.Failed) throw new Exception("Invalid credentials");
+
+        return "fake-token";
     }
+
 
     public async Task<User> RegisterAsync(RegisterUserDto dto)
     {

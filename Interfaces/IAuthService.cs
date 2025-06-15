@@ -6,5 +6,5 @@ namespace api.Interfaces;
 public interface IAuthService
 {
     public Task<User> RegisterAsync(RegisterUserDto dto);
-    public Task<User> LoginAsync(RegisterUserDto dto);
+    public Task<string> LoginAsync(LoginDto dto);
 }
