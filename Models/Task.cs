@@ -19,14 +19,4 @@ public class TodoTask
     public User? User { get; set; }
 
     public TodoTask() {}
-
-    public TodoTask(string title, string description, TaskStatus taskStatus, DateTime? dueDate = null)
-{
-    Id = Guid.NewGuid();
-    Title = title;
-    Description = description;
-    TaskStatus = taskStatus;
-    DueDate = dueDate ?? DateTime.Now.AddDays(1);
-}
-
 }

@@ -11,13 +11,4 @@ public class User
     public List<TodoTask> Tasks { get; set; } = new();
 
     public User() {}
-
-    public User(string firstName, string lastName, string email, string passwordHash)
-    {
-        Id = Guid.NewGuid();
-        FirstName = firstName;
-        LastName = lastName;
-        Email = email;
-        PasswordHash = passwordHash;
-    }
 }
