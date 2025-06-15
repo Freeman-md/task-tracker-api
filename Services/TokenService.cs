@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using api.DTOs;
 using api.Interfaces;
 using api.Models;
 using Microsoft.IdentityModel.Tokens;
@@ -16,7 +17,7 @@ public class TokenService : ITokenService
         _config = config;
     }
 
-    public string GenerateToken(User user)
+    public TokenResponseDto GenerateToken(User user)
     {
         var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
         var issuer = _config["Jwt:Issuer"];
@@ -39,6 +40,10 @@ public class TokenService : ITokenService
             signingCredentials: creds
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return new TokenResponseDto
+        {
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            Expiration = expires
+        };
     }
 }

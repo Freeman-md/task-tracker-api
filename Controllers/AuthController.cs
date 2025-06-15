@@ -1,7 +1,9 @@
 using api.DTOs;
 using api.Interfaces;
 using api.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using YamlDotNet.Core.Tokens;
 
 namespace api.Controllers;
 
@@ -69,8 +71,8 @@ public class AuthController : ControllerBase
         {
             var token = await _authService.LoginAsync(dto);
             return Ok(
-                ApiResponse<object>.SuccessResponse(
-                    new { token },
+                ApiResponse<TokenResponseDto>.SuccessResponse(
+                    token,
                     "Login Successful"
                 )
             );
@@ -80,4 +82,13 @@ public class AuthController : ControllerBase
             return BadRequest(ApiResponse<object>.ErrorResponse(ex.Message));
         }
     }
+
+    [Authorize]
+    [HttpGet("me")]
+    public IActionResult Me([FromServices] ICurrentUserService currentUser)
+    {
+        var userId = currentUser.GetUserId();
+        return Ok(ApiResponse<object>.SuccessResponse(new { userId }, "You are authenticated"));
+    }
+
 }

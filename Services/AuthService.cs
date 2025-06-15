@@ -28,7 +28,7 @@ public class AuthService : IAuthService
         _logger = logger;
     }
 
-    public async Task<string> LoginAsync(LoginDto dto)
+    public async Task<TokenResponseDto> LoginAsync(LoginDto dto)
     {
         var user = await _appDbContext.Users.SingleOrDefaultAsync(
             user => user.Email == dto.Email.ToLower()

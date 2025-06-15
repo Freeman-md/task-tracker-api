@@ -1,8 +1,9 @@
+using api.DTOs;
 using api.Models;
 
 namespace api.Interfaces;
 
 public interface ITokenService
 {
-    string GenerateToken(User user);
+    TokenResponseDto GenerateToken(User user);
 }
