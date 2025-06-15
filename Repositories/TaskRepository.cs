@@ -33,25 +33,57 @@ public class TaskRepository : ITaskRepository
         return task.Id;
     }
 
-    public async Task<List<TaskDto>> GetUserTasksAsync(Guid userId, TodoTaskStatus? status = null)
+    public async Task<List<TaskDto>> GetUserTasksAsync(
+        Guid userId,
+    TodoTaskStatus? status = null,
+    string? search = null,
+    string? sortBy = "dueDate",
+    string? sortDir = "asc"
+    )
     {
+
         var query = _context.TodoTasks
             .Where(t => t.UserId == userId);
 
         if (status != null)
             query = query.Where(todoTask => todoTask.TodoTaskStatus == status);
 
-        return await query
-            .Select(t => new TaskDto
-            {
-                Id = t.Id,
-                Title = t.Title,
-                Description = t.Description,
-                TodoTaskStatus = t.TodoTaskStatus,
-                DueDate = t.DueDate
-            })
-            .ToListAsync();
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.Where(todoTask => todoTask.Title.ToLower().Contains(search.ToLower()) || todoTask.Description.ToLower().Contains(search.ToLower()));
+
+        query = (sortBy?.ToLower(), sortDir?.ToLower()) switch
+        {
+            ("title", "desc") => query.OrderByDescending(todoTask => todoTask.Title),
+            ("title", _) => query.OrderBy(todoTask => todoTask.Title),
+            ("duedate", "desc") => query.OrderByDescending(todoTask => todoTask.DueDate),
+            _ => query.OrderBy(todoTask => todoTask.DueDate),
+        };
+
+        return await query.Select(todoTask => new TaskDto
+        {
+            Id = todoTask.Id,
+            Title = todoTask.Title,
+            Description = todoTask.Description,
+            TodoTaskStatus = todoTask.TodoTaskStatus,
+            DueDate = todoTask.DueDate
+        }).ToListAsync();
+
     }
+
+    public async Task<object> GetTaskStatsAsync(Guid userId)
+    {
+        return new
+        {
+            Total = await _context.TodoTasks.CountAsync(todoTask => todoTask.UserId == userId),
+            Completed = await _context.TodoTasks.CountAsync(todoTask =>
+                todoTask.UserId == userId && todoTask.TodoTaskStatus == TodoTaskStatus.Completed),
+            InProgress = await _context.TodoTasks.CountAsync(todoTask =>
+                todoTask.UserId == userId && todoTask.TodoTaskStatus == TodoTaskStatus.InProgress),
+            Pending = await _context.TodoTasks.CountAsync(todoTask =>
+                todoTask.UserId == userId && todoTask.TodoTaskStatus == TodoTaskStatus.Pending)
+        };
+    }
+
 
     public async Task<bool> UpdateAsync(Guid id, UpdateTaskDto dto, Guid userId)
     {

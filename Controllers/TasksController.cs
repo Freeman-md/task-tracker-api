@@ -36,11 +36,31 @@ public class TasksController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] TodoTaskStatus? status = null)
+    public async Task<IActionResult> Get(
+        [FromQuery] TodoTaskStatus? status = null,
+        [FromQuery] string? search = null,
+        [FromQuery] string? sortBy = "dueDate",
+        [FromQuery] string? sortDir = "asc"
+    )
     {
-        var tasks = await _repository.GetUserTasksAsync(_currentUser.GetUserId()!.Value, status);
+        var tasks = await _repository.GetUserTasksAsync(
+            _currentUser.GetUserId()!.Value,
+            status,
+            search,
+            sortBy,
+            sortDir
+        );
+
         return Ok(ApiResponse<List<TaskDto>>.SuccessResponse(tasks));
     }
+
+    [HttpGet("stats")]
+    public async Task<IActionResult> GetStats()
+    {
+        var stats = await _repository.GetTaskStatsAsync(_currentUser.GetUserId()!.Value);
+        return Ok(ApiResponse<object>.SuccessResponse(stats, "Task stats fetched"));
+    }
+
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] UpdateTaskDto dto)
