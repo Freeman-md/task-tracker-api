@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using api.Interfaces;
 using api.Models;
 
@@ -13,8 +14,9 @@ public class CurrentUserService : ICurrentUserService
     }
 
     public Guid? GetUserId()
-    {
-        var userId = _http.HttpContext?.User?.FindFirst(JwtClaims.UserId)?.Value;
-        return Guid.TryParse(userId, out var id) ? id : null;
-    }
+{
+    var userId = _http.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+    return Guid.TryParse(userId, out var id) ? id : null;
+}
+
 }
