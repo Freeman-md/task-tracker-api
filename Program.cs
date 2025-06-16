@@ -99,15 +99,15 @@ using (var scope = app.Services.CreateScope())
 }
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.MapOpenApi();
     app.UseSwaggerUi(options =>
     {
         options.DocumentPath = "/openapi/v1.json";
         options.Path = "";
     });
-}
+// }
 
 app.UseCors("AllowFrontend");
 
