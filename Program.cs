@@ -25,15 +25,15 @@ builder.Services.AddControllers()
 
 builder.Services.AddCors(options =>
 {
-options.AddPolicy("AllowFrontend", policy =>
-{
-    policy.WithOrigins([
-        "http://localhost:3000",
+    options.AddPolicy("AllowFrontend", policy =>
+    {
+        policy.WithOrigins([
+            "http://localhost:3000",
         "https://freemancodz-tracker.vercel.app"
-        ])
-          .AllowAnyHeader()
-          .AllowAnyMethod();
-});
+            ])
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
 });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -105,6 +105,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUi(options =>
     {
         options.DocumentPath = "/openapi/v1.json";
+        options.Path = "";
     });
 }
 
